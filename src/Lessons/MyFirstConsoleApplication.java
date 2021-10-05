@@ -30,6 +30,7 @@ public class MyFirstConsoleApplication {
     public static int enemyValueMin = 20;
     public static int enemyValueMax = 50;
     public static int countEnemies;
+    public static String[] enemyName = {"Горыныч", "Колобок", "Серый волк", "Кащей", "Баба-Яга"};
 
     public static char[][] map;
     public static char[][] invisibleMap;
@@ -84,6 +85,11 @@ public class MyFirstConsoleApplication {
                 map[y][x] = emptyCell;
             }
         }
+        for (int y = 0; y < mapHeight; y++) {
+            for (int x = 0; x < mapWidth; x++) {
+                invisibleMap[y][x] = emptyCell;
+            }
+        }
 
         System.out.println("Create map. Size is " + mapWidth + "x" + mapHeight);
     }
@@ -96,8 +102,7 @@ public class MyFirstConsoleApplication {
     }
 
     public static void spawnEnemy() {
-        enemyHealth = randomValue(enemyValueMin, enemyValueMax);
-        enemyStr = randomValue(enemyValueMin, enemyValueMax);
+
 
         countEnemies = (mapWidth + mapHeight) / 2;
 
@@ -110,11 +115,11 @@ public class MyFirstConsoleApplication {
             do {
                 enemyPosX = random.nextInt(mapWidth);
                 enemyPosY = random.nextInt(mapHeight);
-            } while ((enemyPosX == playerPosX && enemyPosY == playerPosY) && !isEmptyCell(invisibleMap, enemyPosX, enemyPosY));
+            } while ((enemyPosX == playerPosX && enemyPosY == playerPosY) || !isEmptyCell(invisibleMap, enemyPosX, enemyPosY));
 
             invisibleMap[enemyPosY][enemyPosX] = enemy;
         }
-        System.out.println("Create enemy. Count = " + countEnemies + " (HP=" + enemyHealth + ", STR=" + enemyStr + ")");
+        System.out.println("Create enemy. Count = " + countEnemies);
 
     }
 
@@ -161,15 +166,18 @@ public class MyFirstConsoleApplication {
 
     public static void playerNextMoveAction(int lastPosX, int lastPosY, int nextPosX, int nextPosY) {
         if (invisibleMap[nextPosY][nextPosX] == enemy) {
-            playerHealth -= enemyStr;
-            System.out.println("ALERT! Enemy give damage " + enemyStr + ". " + playerName + " health now " + playerHealth);
-        }
+            battle();
 
-        countEnemies--;
-        invisibleMap[nextPosY][nextPosX] = emptyCell;
-        map[lastPosY][lastPosX] = readyCell;
-        map[playerPosY][playerPosX] = player;
-        System.out.println("Count enemies = " + countEnemies);
+            countEnemies--;
+            invisibleMap[nextPosY][nextPosX] = emptyCell;
+            map[lastPosY][lastPosX] = readyCell;
+            map[playerPosY][playerPosX] = player;
+            System.out.println("Count enemies = " + countEnemies);
+        } else {
+            map[lastPosY][lastPosX] = readyCell;
+            map[playerPosY][playerPosX] = player;
+            System.out.println("Count enemies = " + countEnemies);
+        }
     }
 
     public static boolean isEmptyCell(char[][] mapCheck, int x, int y) {
@@ -198,5 +206,29 @@ public class MyFirstConsoleApplication {
 
     public static boolean isExistEnemies() {
         return countEnemies > 0;
+    }
+
+    public static boolean examination() {
+        int a = randomValue(0, 5);
+        int b = randomValue(0, 5);
+        System.out.println("Если решишь пример: " + a + "+" + b + " то дашь по щам врагу! Иначе сам получишь урон!");
+        return (scanner.nextInt() == a+b);
+    }
+
+    public static void battle() {
+        enemyHealth = randomValue(enemyValueMin, enemyValueMax);
+        enemyStr = randomValue(enemyValueMin, enemyValueMax);
+        int d = random.nextInt(enemyName.length);
+        System.out.println("!!!!!!!!!!!!!!!!!!111111!АХТУНГ!!1!!!!!!!!!!!!!!!!!!!1111");
+        System.out.println("Перед тобой враг: " + enemyName[d] + " (HP=" + enemyHealth + ", STR=" + enemyStr + ")");
+        while (isAlivePlayer() && enemyHealth > 0) {
+            if (!examination()) {
+                playerHealth -= enemyStr;
+                System.out.println("ALERT! Enemy give damage " + enemyStr + ". " + playerName + " health now " + playerHealth);
+            } else {
+                enemyHealth -= playerStr;
+                System.out.println("Враг получил по щам на " + playerStr + " урона. Здоровье врага: " + enemyHealth);
+            }
+        }
     }
 }
