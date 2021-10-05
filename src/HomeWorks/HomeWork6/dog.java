@@ -1,4 +1,4 @@
-package HomeWorks.HW6;
+package HomeWorks.HomeWork6;
 
 public class dog extends animal {
 

@@ -1,4 +1,4 @@
-package HomeWorks.HW6;
+package HomeWorks.HomeWork6;
 
 public class animal {
     static final int SWIM_FAIL = 0;
